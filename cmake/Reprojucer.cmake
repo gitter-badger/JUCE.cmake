@@ -46,7 +46,7 @@ function(jucer_project_begin)
     if(NOT DEFINED tag)
       set(tag ${element})
 
-      if(NOT "${tag}" IN_LIST project_property_tags)
+      if(NOT tag IN_LIST project_property_tags)
         message(FATAL_ERROR "Unsupported project property: ${tag}\n"
           "Supported project properties: ${project_property_tags}"
         )
@@ -108,7 +108,7 @@ function(jucer_project_settings)
     if(NOT DEFINED tag)
       set(tag ${element})
 
-      if(NOT "${tag}" IN_LIST project_setting_tags)
+      if(NOT tag IN_LIST project_setting_tags)
         message(FATAL_ERROR "Unsupported project setting: ${tag}\n"
           "Supported project settings: ${project_setting_tags}"
         )
@@ -128,7 +128,7 @@ function(jucer_project_settings)
         set(JUCER_PROJECT_VERSION_AS_HEX "${hex_value}" PARENT_SCOPE)
 
       elseif(tag STREQUAL "PROJECT_TYPE")
-        if(NOT "${value}" IN_LIST project_types)
+        if(NOT value IN_LIST project_types)
           message(FATAL_ERROR "Unsupported project type: \"${value}\"\n"
             "Supported project types: ${project_types}"
           )
@@ -185,7 +185,7 @@ function(jucer_audio_plugin_settings)
     else()
       set(value ${element})
 
-      if(NOT "${tag}" IN_LIST plugin_setting_tags)
+      if(NOT tag IN_LIST plugin_setting_tags)
         message(FATAL_ERROR "Unsupported audio plugin setting: ${tag}\n"
           "Supported audio plugin settings: ${plugin_setting_tags}"
         )
@@ -297,7 +297,7 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
         endif()
       elseif(APPLE)
         string(REGEX REPLACE "${src_file_extension}$" ".mm" objcxx_src_file "${src_file}")
-        if(NOT "${objcxx_src_file}" IN_LIST module_src_files)
+        if(NOT objcxx_src_file IN_LIST module_src_files)
           set(to_compile TRUE)
         endif()
       else()
@@ -330,7 +330,7 @@ function(jucer_project_module module_name PATH_TAG modules_folder)
     if(NOT DEFINED config_flag)
       set(config_flag ${element})
 
-      if(NOT "${config_flag}" IN_LIST module_config_flags)
+      if(NOT config_flag IN_LIST module_config_flags)
         message(WARNING "Unknown config flag ${config_flag} in module ${module_name}")
       endif()
     else()
@@ -376,7 +376,7 @@ endfunction()
 
 function(jucer_export_target exporter)
 
-  if(NOT "${exporter}" IN_LIST Reprojucer_supported_exporters)
+  if(NOT exporter IN_LIST Reprojucer_supported_exporters)
     message(FATAL_ERROR "Unsupported exporter: ${exporter}\n"
       "Supported exporters: ${Reprojucer_supported_exporters}"
     )
@@ -425,7 +425,7 @@ function(jucer_export_target exporter)
     if(NOT DEFINED tag)
       set(tag ${element})
 
-      if(NOT "${tag}" IN_LIST export_target_settings_tags)
+      if(NOT tag IN_LIST export_target_settings_tags)
         message(FATAL_ERROR "Unsupported export target setting: ${tag}\n"
           "Supported export target settings: ${export_target_settings_tags}"
         )
@@ -527,13 +527,13 @@ endfunction()
 
 function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
 
-  if(NOT "${exporter}" IN_LIST Reprojucer_supported_exporters)
+  if(NOT exporter IN_LIST Reprojucer_supported_exporters)
     message(FATAL_ERROR "Unsupported exporter: ${exporter}\n"
       "Supported exporters: ${Reprojucer_supported_exporters}"
     )
   endif()
 
-  if(NOT "${exporter}" IN_LIST JUCER_EXPORT_TARGETS)
+  if(NOT exporter IN_LIST JUCER_EXPORT_TARGETS)
     message(FATAL_ERROR "You must call jucer_export_target(\"${exporter}\") before "
       "calling jucer_export_target_configuration(\"${exporter}\")."
     )
@@ -573,7 +573,7 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
     if(NOT DEFINED tag)
       set(tag ${element})
 
-      if(NOT "${tag}" IN_LIST configuration_settings_tags)
+      if(NOT tag IN_LIST configuration_settings_tags)
         message(FATAL_ERROR "Unsupported configuration setting: ${tag}\n"
           "Supported configuration settings: ${configuration_settings_tags}"
         )
@@ -690,7 +690,7 @@ function(jucer_project_end)
   foreach(exporter ${Reprojucer_supported_exporters})
     list(FIND Reprojucer_supported_exporters "${exporter}" exporter_index)
     list(GET Reprojucer_supported_exporters_conditions ${exporter_index} condition)
-    if(${condition} AND NOT "${exporter}" IN_LIST JUCER_EXPORT_TARGETS)
+    if(${condition} AND NOT exporter IN_LIST JUCER_EXPORT_TARGETS)
       message(WARNING "You might want to call jucer_export_target(\"${exporter}\").")
     endif()
   endforeach()
