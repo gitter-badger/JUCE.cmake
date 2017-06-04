@@ -17,6 +17,8 @@
 
 #include "JuceHeader.h"
 
+#include "features.hpp"
+
 #include <fstream>
 #include <functional>
 #include <iostream>
@@ -114,11 +116,12 @@ void writeUserNotes(std::ostream& out, const juce::ValueTree& valueTree)
 
 int main(int argc, char* argv[])
 {
-  if (argc != 3)
+  if (argc != 3 && argc != 4)
   {
     std::cerr << "usage: Jucer2Reprojucer"
                  " <jucer_project_file>"
                  " <Reprojucer.cmake_file>"
+                 " [<JUCE_commit_sha1>]"
               << std::endl;
     return 1;
   }
@@ -142,6 +145,34 @@ int main(int argc, char* argv[])
     printError(jucerFilePath + " is not a valid Jucer project.");
     return 1;
   }
+
+  const std::string commitSha1 = args.size() == 4 ? args.at(3) : std::string{};
+  const auto commitSha1AsInt = [&commitSha1]() -> std::uint32_t
+  {
+    if (commitSha1.empty())
+      return kDefaultCommitSha1;
+
+    if (commitSha1.length() < 7)
+      return 0u;
+
+    static_assert(sizeof(std::uint32_t) == sizeof(unsigned long), "");
+    try
+    {
+      return std::stoul(commitSha1.substr(0, 7), nullptr, 16);
+    }
+    catch (const std::invalid_argument&)
+    {
+      return 0u;
+    }
+  }();
+
+  if (!commitSha1AsInt)
+  {
+    printError("Invalid commit SHA-1 \"" + commitSha1 + "\"");
+    return 1;
+  }
+
+  const auto features = getJuceAndProjucerFeatures(commitSha1AsInt);
 
   std::ofstream out{"CMakeLists.txt"};
 
