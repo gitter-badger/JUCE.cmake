@@ -15,6 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with JUCE.cmake.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <stdexcept>
+
+
 static const unsigned long kDefaultCommitSha1 = 0x75cd666;
 
 
@@ -859,6 +862,11 @@ inline bool getCommitFeature(CommitFeature feature, unsigned long commitSha1)
     case CommitFeature::hasVst2Interface:
       return false;
     }
+  }
+
+  if (commitSha1 == kDefaultCommitSha1)
+  {
+    throw std::logic_error{"kDefaultCommitSha1 is not a supported commit!"};
   }
 
   if (feature == CommitFeature::isSupported)
