@@ -161,8 +161,7 @@ int main(int argc, char* argv[])
         "std::stoul won't be able to parse 7-digit hex values");
       const auto hex = std::stoul(juceCommitSha1.substr(0, 7), nullptr, 16);
 
-      if (std::find(kSupportedCommits.begin(), kSupportedCommits.end(), hex) !=
-          kSupportedCommits.end())
+      if (getCommitFeature(CommitFeature::isSupported, hex))
       {
         return hex;
       }
@@ -495,8 +494,7 @@ int main(int argc, char* argv[])
         }
 
         const auto hasVst2Interface =
-          std::find(kSupportedCommits.begin(), kSupportedCommits.end(), commitSha1) <=
-          std::find(kSupportedCommits.begin(), kSupportedCommits.end(), 0x9f31d64);
+          getCommitFeature(CommitFeature::hasVst2Interface, commitSha1);
         const auto isVstPluginHost =
           jucerProject.getChildWithName("MODULES")
             .getChildWithProperty("id", "juce_audio_processors")
