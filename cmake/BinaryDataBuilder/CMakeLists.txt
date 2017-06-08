@@ -46,8 +46,6 @@ file(COPY
 )
 
 file(COPY
-  "${Projucer_jucer_DIR}/Source/Utility/jucer_CodeHelpers.cpp"
-  "${Projucer_jucer_DIR}/Source/Utility/jucer_CodeHelpers.h"
   "${Projucer_jucer_DIR}/Source/Utility/jucer_FileHelpers.cpp"
   "${Projucer_jucer_DIR}/Source/Utility/jucer_FileHelpers.h"
   DESTINATION "${CMAKE_CURRENT_LIST_DIR}/Source/Utility"
