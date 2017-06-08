@@ -18,6 +18,7 @@
 // The content of this file was copied from
 //   JUCE/extras/Projucer/Source/Project Saving/jucer_ResourceFile.cpp
 // at commit fc9937d83201331eb00303b0fbc1b77d47ae27ac (tags/4.3.1).
+// Then some lines were removed.
 
 
 /*
@@ -46,7 +47,6 @@
 
 #include "../jucer_Headers.h"
 #include "jucer_ResourceFile.h"
-#include "../Application/jucer_OpenDocumentManager.h"
 
 static const char* resourceFileIdentifierString = "JUCER_BINARY_RESOURCE";
 
