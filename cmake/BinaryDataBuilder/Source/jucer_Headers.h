@@ -17,6 +17,8 @@
 
 #pragma once
 
-#include "../Utility/jucer_CodeHelpers.h"
-#include "../Utility/jucer_FileHelpers.h"
-#include "../Utility/jucer_MiscUtilities.h"
+#include "JuceHeader.h"
+
+#include "Utility/jucer_CodeHelpers.h"
+#include "Utility/jucer_FileHelpers.h"
+#include "Utility/jucer_MiscUtilities.h"
