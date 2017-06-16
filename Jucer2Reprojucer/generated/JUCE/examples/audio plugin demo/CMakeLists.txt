@@ -177,6 +177,8 @@ jucer_export_target_configuration(
   NAME "Debug"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
+  # VST_BINARY_LOCATION
+  # AU_BINARY_LOCATION
   OSX_BASE_SDK_VERSION "Use Default"
   OSX_DEPLOYMENT_TARGET "Use Default"
   OSX_ARCHITECTURE "Universal Binary (32/64-bit)"
@@ -188,6 +190,8 @@ jucer_export_target_configuration(
   NAME "Release"
   # HEADER_SEARCH_PATHS
   # PREPROCESSOR_DEFINITIONS
+  # VST_BINARY_LOCATION
+  # AU_BINARY_LOCATION
   OSX_BASE_SDK_VERSION "Use Default"
   OSX_DEPLOYMENT_TARGET "Use Default"
   OSX_ARCHITECTURE "Universal Binary (32/64-bit)"
