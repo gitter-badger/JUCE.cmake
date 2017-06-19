@@ -575,6 +575,8 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
 
   if(exporter STREQUAL "Xcode (MacOSX)")
     list(APPEND configuration_settings_tags
+      "VST_BINARY_LOCATION"
+      "AU_BINARY_LOCATION"
       "OSX_BASE_SDK_VERSION"
       "OSX_DEPLOYMENT_TARGET"
       "OSX_ARCHITECTURE"
@@ -625,6 +627,12 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
           $<$<CONFIG:${configuration_name}>:${value}>
         )
         set(JUCER_PREPROCESSOR_DEFINITIONS ${JUCER_PREPROCESSOR_DEFINITIONS} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "VST_BINARY_LOCATION")
+        set(JUCER_VST_BINARY_LOCATION_${configuration_name} ${value} PARENT_SCOPE)
+
+      elseif(tag STREQUAL "AU_BINARY_LOCATION")
+        set(JUCER_AU_BINARY_LOCATION_${configuration_name} ${value} PARENT_SCOPE)
 
       elseif(tag STREQUAL "OSX_BASE_SDK_VERSION")
         if(value MATCHES "10\\.([5-9]|10|11|12) SDK")
@@ -874,6 +882,7 @@ function(jucer_project_end)
         __generate_plist_file(${full_target_name} "VST" "BNDL" "????" "")
         __set_bundle_properties(${full_target_name} "vst")
         __set_common_target_properties(${full_target_name})
+        __set_plugin_output_directory_property(${full_target_name} "VST" "VST" ".vst")
         __set_JucePlugin_Build_defines(${full_target_name} "VSTPlugIn")
         __link_osx_frameworks(${target_name}_VST ${JUCER_PROJECT_OSX_FRAMEWORKS})
       endif()
@@ -925,6 +934,9 @@ function(jucer_project_end)
         __generate_plist_file(${full_target_name} "AU" "BNDL" "????" "${audio_components_entries}")
         __set_bundle_properties(${full_target_name} "component")
         __set_common_target_properties(${full_target_name})
+        __set_plugin_output_directory_property(${full_target_name}
+          "AU" "Components" ".component"
+        )
         __set_JucePlugin_Build_defines(${full_target_name} "AudioUnitPlugIn")
         set(au_plugin_osx_frameworks
           ${JUCER_PROJECT_OSX_FRAMEWORKS} "AudioUnit" "CoreAudioKit"
@@ -1486,6 +1498,57 @@ function(__set_bundle_properties target_name extension)
     BUNDLE_EXTENSION "${extension}"
     XCODE_ATTRIBUTE_WRAPPER_EXTENSION "${extension}"
   )
+
+endfunction()
+
+
+function(__set_plugin_output_directory_property target_name plugin_type plugin_dir plugin_extension)
+
+  get_target_property(output_name ${target_name} OUTPUT_NAME)
+
+  if(CMAKE_BUILD_TYPE)
+    if(DEFINED JUCER_${plugin_type}_BINARY_LOCATION_${CMAKE_BUILD_TYPE})
+      set(new_output_dir ${JUCER_${plugin_type}_BINARY_LOCATION_${CMAKE_BUILD_TYPE}})
+    else()
+      set(new_output_dir "$ENV{HOME}/Library/Audio/Plug-Ins/${plugin_dir}")
+    endif()
+    set_target_properties(${target_name} PROPERTIES
+      LIBRARY_OUTPUT_DIRECTORY ${new_output_dir}
+    )
+
+    add_custom_command(TARGET ${target_name} PRE_LINK
+      COMMAND "/bin/ln"
+      ARGS "-sfh"
+      "${new_output_dir}/${output_name}${plugin_extension}"
+      "${CMAKE_CURRENT_BINARY_DIR}/${output_name}${plugin_extension}"
+    )
+  else()
+    foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
+      set(old_output_dir "${CMAKE_CURRENT_BINARY_DIR}/${configuration_name}")
+      string(APPEND all_confs_old_output_dir
+        "$<$<CONFIG:${configuration_name}>:${old_output_dir}>"
+      )
+
+      if(DEFINED JUCER_${plugin_type}_BINARY_LOCATION_${configuration_name})
+        set(new_output_dir ${JUCER_${plugin_type}_BINARY_LOCATION_${configuration_name}})
+      else()
+        set(new_output_dir "$ENV{HOME}/Library/Audio/Plug-Ins/${plugin_dir}")
+      endif()
+      string(APPEND all_confs_new_output_dir
+        "$<$<CONFIG:${configuration_name}>:${new_output_dir}>"
+      )
+    endforeach()
+    set_target_properties(${target_name} PROPERTIES
+      LIBRARY_OUTPUT_DIRECTORY ${all_confs_new_output_dir}
+    )
+
+    add_custom_command(TARGET ${target_name} PRE_LINK
+      COMMAND "/bin/ln"
+      ARGS "-sfh"
+      "${all_confs_new_output_dir}/${output_name}${plugin_extension}"
+      "${all_confs_old_output_dir}/${output_name}${plugin_extension}"
+    )
+  endif()
 
 endfunction()
 
