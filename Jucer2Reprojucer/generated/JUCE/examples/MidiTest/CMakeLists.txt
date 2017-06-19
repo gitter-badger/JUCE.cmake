@@ -184,6 +184,7 @@ jucer_export_target_configuration(
   # PREPROCESSOR_DEFINITIONS
   WARNING_LEVEL "High"
   # TREAT_WARNINGS_AS_ERRORS
+  RUNTIME_LIBRARY "(Default)"
 )
 
 jucer_export_target_configuration(
@@ -193,6 +194,7 @@ jucer_export_target_configuration(
   # PREPROCESSOR_DEFINITIONS
   WARNING_LEVEL "High"
   # TREAT_WARNINGS_AS_ERRORS
+  RUNTIME_LIBRARY "(Default)"
 )
 
 jucer_export_target(
