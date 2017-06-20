@@ -807,6 +807,12 @@ function(jucer_project_end)
     )
   endif()
 
+  if(NOT JUCER_PROJECT_CONFIGURATIONS)
+    message(FATAL_ERROR "You must call "
+      "jucer_export_target_configuration(\"${Reprojucer_current_exporter}\") before "
+      "calling jucer_project_end()."
+    )
+  endif()
 
   if(NOT DEFINED CMAKE_CONFIGURATION_TYPES)
     if(CMAKE_BUILD_TYPE STREQUAL "")
@@ -815,9 +821,7 @@ function(jucer_project_end)
     endif()
   endif()
 
-  if(DEFINED JUCER_PROJECT_CONFIGURATIONS)
-    set(CMAKE_CONFIGURATION_TYPES ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
-  endif()
+  set(CMAKE_CONFIGURATION_TYPES ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
 
   project(${JUCER_PROJECT_NAME})
 
