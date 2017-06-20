@@ -1448,12 +1448,19 @@ function(__set_common_target_properties target_name)
       endif()
     endif()
 
-    target_compile_definitions(${target_name} PRIVATE
-      $<$<CONFIG:Debug>:_DEBUG=1>
-      $<$<CONFIG:Debug>:DEBUG=1>
-      $<$<NOT:$<CONFIG:Debug>>:_NDEBUG=1>
-      $<$<NOT:$<CONFIG:Debug>>:NDEBUG=1>
-    )
+    foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
+      if(${JUCER_CONFIGURATION_IS_DEBUG_${configuration_name}})
+        target_compile_definitions(${target_name} PRIVATE
+          $<$<CONFIG:${configuration_name}>:_DEBUG=1>
+          $<$<CONFIG:${configuration_name}>:DEBUG=1>
+        )
+      else()
+        target_compile_definitions(${target_name} PRIVATE
+          $<$<CONFIG:${configuration_name}>:_NDEBUG=1>
+          $<$<CONFIG:${configuration_name}>:NDEBUG=1>
+        )
+      endif()
+    endforeach()
 
     foreach(item ${JUCER_OSX_ARCHITECTURES})
       if(NOT DEFINED configuration_name)
@@ -1500,9 +1507,22 @@ function(__set_common_target_properties target_name)
         WORKING_DIRECTORY "${JUCER_TARGET_PROJECT_FOLDER}"
       )
     endif()
-  endif()
 
-  if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
+  elseif(WIN32)
+    foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
+      if(${JUCER_CONFIGURATION_IS_DEBUG_${configuration_name}})
+        target_compile_definitions(${target_name} PRIVATE
+          $<$<CONFIG:${configuration_name}>:DEBUG>
+          $<$<CONFIG:${configuration_name}>:_DEBUG>
+        )
+      else()
+        target_compile_definitions(${target_name} PRIVATE
+          $<$<CONFIG:${configuration_name}>:NDEBUG>
+        )
+      endif()
+    endforeach()
+
+  elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
     set_target_properties(${target_name} PROPERTIES CXX_EXTENSIONS OFF)
     set_target_properties(${target_name} PROPERTIES CXX_STANDARD 11)
 
@@ -1515,6 +1535,19 @@ function(__set_common_target_properties target_name)
         set_target_properties(${target_name} PROPERTIES CXX_STANDARD 14)
       endif()
     endif()
+
+    foreach(configuration_name ${JUCER_PROJECT_CONFIGURATIONS})
+      if(${JUCER_CONFIGURATION_IS_DEBUG_${configuration_name}})
+        target_compile_definitions(${target_name} PRIVATE
+          $<$<CONFIG:${configuration_name}>:DEBUG=1>
+          $<$<CONFIG:${configuration_name}>:_DEBUG=1>
+        )
+      else()
+        target_compile_definitions(${target_name} PRIVATE
+          $<$<CONFIG:${configuration_name}>:NDEBUG=1>
+        )
+      endif()
+    endforeach()
 
     set(linux_packages ${JUCER_PROJECT_LINUX_PACKAGES})
     list(SORT linux_packages)
