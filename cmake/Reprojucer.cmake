@@ -573,7 +573,9 @@ function(jucer_export_target exporter)
 endfunction()
 
 
-function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
+function(jucer_export_target_configuration
+  exporter NAME_TAG configuration_name DEBUG_TAG is_debug
+)
 
   if(NOT "${exporter}" IN_LIST Reprojucer_supported_exporters)
     message(FATAL_ERROR "Unsupported exporter: ${exporter}\n"
@@ -595,6 +597,8 @@ function(jucer_export_target_configuration exporter NAME_TAG configuration_name)
 
   list(APPEND JUCER_PROJECT_CONFIGURATIONS ${configuration_name})
   set(JUCER_PROJECT_CONFIGURATIONS ${JUCER_PROJECT_CONFIGURATIONS} PARENT_SCOPE)
+
+  set(JUCER_CONFIGURATION_IS_DEBUG_${configuration_name} ${is_debug} PARENT_SCOPE)
 
   set(configuration_settings_tags
     "HEADER_SEARCH_PATHS"
